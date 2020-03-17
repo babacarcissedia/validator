@@ -1,0 +1,30 @@
+{
+  "name": "form-validator",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "test": "echo no test implemented yet",
+    "lint": "standard --parser typescript-eslint-parser --plugin typescript ./src/*.ts"
+  },
+  "keywords": [
+    "form",
+    "validation",
+    "data"
+  ],
+  "description": "Be eloquent and validate your form data with style.",
+  "main": "src/index.ts",
+  "repository": "git@github.com:bcdbuddy/form-validator.git",
+  "author": "Babacar Cissé DIA <bcdbuddy@outlook.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "nodemon": "^2.0.2",
+    "ts-jest": "^25.2.1",
+    "tslint": "^6.1.0"
+  }
+}
