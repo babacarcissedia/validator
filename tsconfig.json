@@ -1,5 +1,5 @@
 {
-	"compileOnSave": true,
+  "compileOnSave": true,
   "compilerOptions": {
     "resolveJsonModule": true,
     "module": "commonjs",
@@ -10,7 +10,9 @@
     "strict": true,
     "sourceMap": true,
     "moduleResolution": "node",
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "declaration": true,
+    "declarationDir": "./typings"
   },
   "include": [
     "src/**/*"

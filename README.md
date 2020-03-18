@@ -6,6 +6,7 @@ The following is also applicable to the whole javascript ecosystem in general
 ## Summary
 - Validation rules
   * custom validation rule
+- Usage with VueJS
 - Usage with Express/MongoDB
   * with repository pattern 
 - Usage in general
@@ -26,9 +27,64 @@ The following is also applicable to the whole javascript ecosystem in general
 - in_array
 - min_length
 
+## Usage with VueJS
+```vue
+// component.vue
+<template lang="pug">
+  .register-page
+    h1 Créer votre compte
+    form.form(action="/user" method='POST' @submit.prevent="onSubmit")
+      .form-field.has-input
+        label(for="phone_number") Phone number 
+        input(type="text" name="phone_number" id="phone_number" v-model="user.phone_number")
+      .form-field.has-input
+        label(for="password") Password
+        input(type="password" name="password" id="password" v-model="user.password")
+      .form-field.has-input
+        label(for="password_confirmation") Password confirmation
+        input(type="password" name="password_confirmation" id="password_confirmation" v-model="user.password_confirmation")
+      .form-actions
+        button.button(type="submit") Register
+      p
+        a(href="/user/login") Already a member ? Login here
+</template>
+import Validator from 'buddy-validator'
+export default {
+  data () {
+    return {
+      user: {
+        phone_number: '',
+        password: '',
+        password_confirmation: '',
+      }
+    }
+  },
+  methods: {
+    onSubmit () {
+      const v = await Validator.make({
+        data: this.user,
+        rules: {
+            phone_number: 'required|regex:^[0-9]{9,10}$',
+            password: 'required|confirmed' 
+        },
+        data:
+      })
+      if (v.fails()) {
+        this.errors = v.getErrors()
+        return
+      }
+      // your axios request here
+    }
+  },
+  mounted () {
+    
+  }
+}
+```
+
 ## Usage with express 
 ```ts
-import Validator from 'form-validator'
+import Validator from 'buddy-validator'
 
 const formData = request.body // {first_name, last_name, age}
 const v = await Validator.make({
