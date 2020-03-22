@@ -44,6 +44,8 @@ npm install --save-dev @types/buddy-validator
 - required
 - email
 - confirmed
+- min
+- max
 - between
 - unique
 - exists
@@ -53,7 +55,8 @@ npm install --save-dev @types/buddy-validator
 - after
 - regex
 - in_array
-- min
+- boolean
+- min_length
 
 ## Hooks
 - after validation
@@ -86,6 +89,7 @@ const v = await Validator.make({
   data: {
     name: 'John Doe',
     age: 20,
+    email: 'john at domain dot com'
     
   },
   rules: {
@@ -96,6 +100,9 @@ const v = await Validator.make({
 })
 if (v.fails()) {
   const errors = v.getErrors()
+  // {
+  //  "email": "'john at domain dot com' is not a valid email"
+  // } 
 }
 ```
 
