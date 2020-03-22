@@ -1,7 +1,7 @@
 {
   "name": "buddy-validator",
-  "version": "0.4.0",
-  "main": "./dist/Validator.js",
+  "version": "0.4.1",
+  "main": "index.js",
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",

@@ -14,12 +14,13 @@ The following is also applicable to the whole javascript ecosystem in general
 ## Summary
 - Installation
 - Validation rules
-- Hooks
 - Usage on CommonJS
 - Usage with VueJS
 - Usage with Express/MongoDB
   * with repository pattern 
-- Usage in general
+- Hooks
+- TODO
+- Contribute
 
 ## Installation
 ```bash
@@ -58,33 +59,10 @@ npm install --save-dev @types/buddy-validator
 - boolean
 - min_length
 
-## Hooks
-- after validation
-```ts
-const v = Validator.make({
-    data: {login: '', password: 's€cr€t'},
-    rules: { 
-        login: 'required',
-        password: 'required'
-    }
-}
-v.afterHook((validator) => {
-    validator.addError('auth', 'Something is wrong with your credentials input')
-})
-if (v.fails()) {
-    const errors = v.getErrors()
-    // would contain
-    // {
-    //    login: 'Login field is required',
-    //    auth: 'something is wrong with your credentials input'
-    // }
-}
-
-```
 
 ## Usage on CommonJS
 ```js
-const { Validator } = require('buddy-validator')
+const Validator = require('buddy-validator')
 const v = await Validator.make({
   data: {
     name: 'John Doe',
@@ -105,7 +83,6 @@ if (v.fails()) {
   // } 
 }
 ```
-
 
 ## Usage with VueJS
 ```vue
@@ -266,6 +243,29 @@ If you're implementing the repository pattern then you will most likely have som
 
 I also wrote about the repository pattern: [insert:devto link]
 
+## Hooks
+- after validation
+```ts
+const v = Validator.make({
+    data: {login: '', password: 's€cr€t'},
+    rules: { 
+        login: 'required',
+        password: 'required'
+    }
+}
+v.afterHook((validator) => {
+    validator.addError('auth', 'Something is wrong with your credentials input')
+})
+if (v.fails()) {
+    const errors = v.getErrors()
+    // would contain
+    // {
+    //    login: 'Login field is required',
+    //    auth: 'something is wrong with your credentials input'
+    // }
+}
+
+```
 
 ## TODO
 - support customer message like 
