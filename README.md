@@ -1,4 +1,6 @@
 # Form validator for web application or API
+    ![.github/workflows/package.yml](https://github.com/bcdbuddy/form-validator/workflows/.github/workflows/package.yml/badge.svg)
+
 Inspired from [Laravel validation](https://github.com/laravel/docs/blob/7.x/validation.md).
 
 Dependency free.
