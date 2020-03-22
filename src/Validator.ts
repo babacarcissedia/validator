@@ -1,4 +1,3 @@
-
 export interface IValidatorOptions {
   data: Map<string, any>,
   rules: any,
@@ -13,13 +12,13 @@ export interface IValidatorMessage {
   confirmed: string
 }
 
-//https://laravel.com/docs/5.8/validation#rule-string
-export default class Validator {
+export class Validator {
   protected data: Map<string, any>;
   protected rules: any;
   protected messages: Map<string, string>;
-  protected errors: Map<string, string>;
+  protected errors: Map<string, string> = new Map();
   protected models: any;
+  protected afterCallbacks: ((v: Validator) => void)[] = [];
 
   constructor (options: IValidatorOptions) {
     const defaultOptions = {
@@ -37,6 +36,8 @@ export default class Validator {
       min_length: ':field length need to be at least :length: character(s) long.',
       email: ':value is not a valid email.',
       confirmed: ':field does not match confirmation field.',
+      min: ':field length must be greater than or equal :min',
+      max: ':field length must be lesser than or equal :max',
       between: ':field length must be between :min and :max',
       unique: ':field already exists.',
       exists: 'No :model matching :key = :value',
@@ -45,11 +46,11 @@ export default class Validator {
       greater_than: '\':field\' should be a greater than \':otherField\'.',
       after: '\':field\' should be a date greater past \':date\'.',
       in_array: '\':value\' is not a value from \':values\'.',
-      regex: '\':field\' does not match regex \':regex\'.'
+      regex: '\':field\' does not match regex \':regex\'.',
+      boolean: '\':field\' should be true or false value not \':value\'.'
     }, options.messages);
 
     this.messages = new Map(Object.entries(messages));
-    this.errors = new Map()
   }
 
   /**
@@ -103,6 +104,12 @@ export default class Validator {
           case 'confirmed':
             this.confirmed.apply(this, params)
             break;
+          case 'min':
+            this.min.apply(this, params)
+            break;
+          case 'max':
+            this.max.apply(this, params)
+            break;
           case 'between':
             this.between.apply(this, params)
             break;
@@ -133,10 +140,17 @@ export default class Validator {
           case 'in_array':
             this.in_array.apply(this, params)
             break;
+          case 'boolean':
+            this.boolean.apply(this, params)
+            break;
           default:
             throw new Error('Unknown validation rule: ' + method)
         }
       }
+    }
+
+    for (const callback of this.afterCallbacks) {
+      callback(this)
     }
     return this
   }
@@ -199,6 +213,43 @@ export default class Validator {
     }
     return true
   }
+
+  /**
+   *
+   * @param {string} field
+   * @param {string} min
+   * @returns boolean
+   */
+  min (field: string, min: string): boolean {
+    if (!this.data.has(field)) {
+      return false
+    }
+    const value = Number(this.data.get(field))
+    if (value < +min) {
+      this.addError(field, this.getErrorFor('min', field, {min}))
+      return false
+    }
+    return false
+  }
+
+  /**
+   *
+   * @param {string} field
+   * @param {string} max
+   * @returns boolean
+   */
+  max (field: string, max: string): boolean {
+    if (!this.data.has(field)) {
+      return false
+    }
+    const value = Number(this.data.get(field))
+    if (value > +max) {
+      this.addError(field, this.getErrorFor('max', field, {max}))
+      return false
+    }
+    return false
+  }
+
   /**
    *
    * @param {string} field
@@ -210,7 +261,8 @@ export default class Validator {
     if (!this.data.has(field)) {
       return false
     }
-    if (this.data.get(field).length < +min || this.data.get(field).length > +max) {
+    const value = Number(this.data.get(field))
+    if (value < +min || value > +max) {
       this.addError(field, this.getErrorFor('between', field, {min, max}))
       return false
     }
@@ -229,7 +281,7 @@ export default class Validator {
     }
     const exists = await this._modelExists(field, model, field)
     if (exists) {
-      this.addError(field, this.getErrorFor('unique', field, {model, value: this.data.get(field)}))
+      this.addError(field, this.getErrorFor('unique', field, {model}))
     }
     return exists
   }
@@ -380,7 +432,7 @@ export default class Validator {
     const regex = new RegExp(reg)
     const hasError = !regex.test(this.data.get(field))
     if (hasError) {
-      this.addError(field, this.getErrorFor('regex', field, { reg: regex }))
+      this.addError(field, this.getErrorFor('regex', field, {reg: regex}))
     }
     return !hasError
   }
@@ -406,6 +458,17 @@ export default class Validator {
     return !hasError
   }
 
+  boolean (field: string): boolean {
+    if (!this.data.has(field)) {
+      return false
+    }
+    const hasError: boolean = ![true, false, 1, 0, '1', '0'].includes(this.data.get(field))
+    if (hasError) {
+      this.addError(field, this.getErrorFor('boolean', field))
+    }
+    return !hasError
+  }
+
   /**
    * @param {IValidatorOptions} options
    * @returns Validator
@@ -425,10 +488,10 @@ export default class Validator {
   /**
    * @returns {[key: string]: string}
    */
-  getErrors (): {[key: string]: string} {
+  getErrors (): { [key: string]: string } {
     // Object.fromEntries is still on Draft on EcmaScript so use the following code
     // return Object.fromEntries(this.errors)
-    let obj: {[key: string]: string} = {}
+    let obj: { [key: string]: string } = {}
     for (let [key, value] of this.errors.entries()) {
       obj[key] = value
     }
@@ -468,4 +531,10 @@ export default class Validator {
     this.errors.set(field, message)
     return this
   }
+
+  public afterHook (callback: (v: Validator) => void) {
+    this.afterCallbacks.push(callback)
+  }
 }
+
+export default Validator

@@ -6,15 +6,19 @@
     "esModuleInterop": true,
     "baseUrl": "./src",
     "outDir": "./dist",
-    "target": "es6",
+    "target": "es5",
     "strict": true,
     "sourceMap": true,
     "moduleResolution": "node",
     "noImplicitAny": false,
     "declaration": true,
-    "declarationDir": "./typings"
+    "declarationDir": "./typings",
+    "lib": [ "ES2020" ],
+    "downlevelIteration": true
   },
+
   "include": [
     "src/**/*"
-  ]
+  ],
+  "exclude": ["test/**/*"]
 }

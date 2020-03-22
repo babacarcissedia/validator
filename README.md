@@ -1,15 +1,43 @@
 # Form validator for web application or API
+Inspired from [Laravel validation](https://github.com/laravel/docs/blob/7.x/validation.md).
+
+Dependency free.
+
 If you're building application with ExpressJs and MongoDB then this is definitely something you need to check out.
 This is a validation tool that you can use in your every day life as 
 The following is also applicable to the whole javascript ecosystem in general
 
+[NPM](https://www.npmjs.com/package/buddy-validator)
+
+![npm](https://img.shields.io/npm/dm/buddy-validator)
+
 ## Summary
+- Installation
 - Validation rules
-  * custom validation rule
+- Hooks
+- Usage on CommonJS
 - Usage with VueJS
 - Usage with Express/MongoDB
   * with repository pattern 
 - Usage in general
+
+## Installation
+```bash
+// with yarn
+yarn add buddy-validator
+
+// with npm
+npm install buddy-validator
+```
+
+### Add typings for typescript users
+```bash
+// with yarn
+yarn add -D @types/buddy-validator
+
+// with npm
+npm install --save-dev @types/buddy-validator
+```
 
 
 ## Validation rules
@@ -25,11 +53,56 @@ The following is also applicable to the whole javascript ecosystem in general
 - after
 - regex
 - in_array
-- min_length
+- min
+
+## Hooks
+- after validation
+```ts
+const v = Validator.make({
+    data: {login: '', password: 's€cr€t'},
+    rules: { 
+        login: 'required',
+        password: 'required'
+    }
+}
+v.afterHook((validator) => {
+    validator.addError('auth', 'Something is wrong with your credentials input')
+})
+if (v.fails()) {
+    const errors = v.getErrors()
+    // would contain
+    // {
+    //    login: 'Login field is required',
+    //    auth: 'something is wrong with your credentials input'
+    // }
+}
+
+```
+
+## Usage on CommonJS
+```js
+const { Validator } = require('buddy-validator')
+const v = await Validator.make({
+  data: {
+    name: 'John Doe',
+    age: 20,
+    
+  },
+  rules: {
+    name: 'required',
+    age: 'min:18',
+    email: 'required|email'
+  }
+})
+if (v.fails()) {
+  const errors = v.getErrors()
+}
+```
+
 
 ## Usage with VueJS
 ```vue
-// component.vue
+// component.vue => template
 <template lang="pug">
   .register-page
     h1 Créer votre compte
@@ -48,6 +121,10 @@ The following is also applicable to the whole javascript ecosystem in general
       p
         a(href="/user/login") Already a member ? Login here
 </template>
+```
+
+```js
+// component.vue => script
 import Validator from 'buddy-validator'
 export default {
   data () {
@@ -60,14 +137,13 @@ export default {
     }
   },
   methods: {
-    onSubmit () {
+    async onSubmit () {
       const v = await Validator.make({
         data: this.user,
         rules: {
             phone_number: 'required|regex:^[0-9]{9,10}$',
             password: 'required|confirmed' 
         },
-        data:
       })
       if (v.fails()) {
         this.errors = v.getErrors()
@@ -75,9 +151,6 @@ export default {
       }
       // your axios request here
     }
-  },
-  mounted () {
-    
   }
 }
 ```
@@ -100,7 +173,7 @@ const v = await Validator.make({
        }  
      })
    },
-    first_name: 'required|min_length:3',
+    first_name: 'required|min:3',
     email: ['required', 'unique:Users'],
     email: function (filter) {
         const email = filter.value        
@@ -169,7 +242,6 @@ If you're implementing the repository pattern then you will most likely have som
   }
 ```
 ```ts
-  // Your mongo model
   import RestaurantRepository from './model/RestaurantRepository'
   // await because contains async codes
   const v = await Validator.make({
@@ -186,6 +258,15 @@ If you're implementing the repository pattern then you will most likely have som
 ```
 
 I also wrote about the repository pattern: [insert:devto link]
+
+
+## TODO
+- support customer message like 
+```js
+const message = { email: { required: 'Your email is required if you wish like to use this app' } }
+```
+- make it work with commonJS by transpiling (babel or something)
+- implement rules from https://github.com/laravel/docs/blob/7.x/validation.md#available-validation-rules
 
 
 ## Contribute

@@ -1,6 +1,7 @@
 {
   "name": "buddy-validator",
-  "version": "0.3.0",
+  "version": "0.4.0",
+  "main": "./dist/Validator.js",
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
@@ -14,15 +15,12 @@
     "data"
   ],
   "description": "Be eloquent and validate your form data with style.",
-  "main": "src/index.ts",
   "repository": "git@github.com:bcdbuddy/form-validator.git",
   "author": "Babacar Cissé DIA <bcdbuddy@outlook.com>",
   "license": "MIT",
   "private": false,
-  "dependencies": {
-    "typescript": "^3.8.3"
-  },
   "devDependencies": {
+    "typescript": "^3.8.3",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "ts-jest": "^25.2.1",
