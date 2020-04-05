@@ -34,6 +34,7 @@ export class Validator {
     const messages = Object.assign({}, {
       required: ':field is required.',
       min_length: ':field length need to be at least :length: character(s) long.',
+      max_length: ':field length need to be at most :length: character(s) long.',
       email: ':value is not a valid email.',
       confirmed: ':field does not match confirmation field.',
       min: ':field length must be greater than or equal :min',
@@ -97,6 +98,9 @@ export class Validator {
             break;
           case 'min_length':
             this.min_length.apply(this, params)
+            break;
+          case 'max_length':
+            this.max_length.apply(this, params)
             break;
           case 'email':
             this.email.apply(this, params)
@@ -168,7 +172,6 @@ export class Validator {
     return true
   }
 
-
   /**
    * @param {string} field
    * @param {string} l
@@ -178,6 +181,20 @@ export class Validator {
     const length = Number(l)
     if (this.data.has(field) && String(this.data.get(field)).length < length) {
       this.addError(field, this.getErrorFor('min_length', field, {length}))
+      return false
+    }
+    return true
+  }
+
+  /**
+   * @param {string} field
+   * @param {string} l
+   * @returns boolean
+   */
+  max_length (field: string, l: string): boolean {
+    const length = Number(l)
+    if (this.data.has(field) && String(this.data.get(field)).length > length) {
+      this.addError(field, this.getErrorFor('max_length', field, {length}))
       return false
     }
     return true
@@ -270,7 +287,6 @@ export class Validator {
     return true
   }
 
-
   /**
    * @param {string} field
    * @param {string} model
@@ -286,7 +302,6 @@ export class Validator {
     }
     return exists
   }
-
 
   /**
    * @param {string} field
