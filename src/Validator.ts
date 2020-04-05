@@ -1,5 +1,5 @@
 export interface IValidatorOptions {
-  data: Map<string, any>,
+  data: Map<string, any> | {},
   rules: any,
   messages?: any,
   models?: any
@@ -171,6 +171,7 @@ export class Validator {
 
   /**
    * @param {string} field
+   * @param {string} l
    * @returns boolean
    */
   min_length (field: string, l: string): boolean {

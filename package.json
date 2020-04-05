@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
-    "test": "echo no test implemented yet",
+    "test": "jest --no-cache",
     "lint": "standard --parser typescript-eslint-parser --plugin typescript ./src/*.ts"
   },
   "types": "./typings",
@@ -20,10 +20,11 @@
   "license": "MIT",
   "private": false,
   "devDependencies": {
-    "typescript": "^3.8.3",
-    "jest": "^25.1.0",
+    "@types/jest": "^25.2.1",
+    "jest": "^25.2.7",
     "nodemon": "^2.0.2",
-    "ts-jest": "^25.2.1",
-    "tslint": "^6.1.0"
+    "ts-jest": "^25.3.1",
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
   }
 }
