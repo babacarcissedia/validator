@@ -6,10 +6,8 @@ describe('Validator::required', () => {
   }
 
   it('should fail when field is not present', async (done) => {
-
     const v = await Validator.make({
-      data: {
-      },
+      data: {},
       rules
     })
     expect(v.fails()).toBe(true)

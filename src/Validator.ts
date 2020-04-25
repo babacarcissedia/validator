@@ -2,7 +2,8 @@ export interface IValidatorOptions {
   data: Map<string, any> | {},
   rules: any,
   messages?: any,
-  models?: any
+  models?: any,
+  abortEarly: boolean
 }
 
 
@@ -12,6 +13,9 @@ export interface IValidatorMessage {
   confirmed: string
 }
 
+/**
+* All methods return boolean indicating whether or not the test failed
+*/
 export class Validator {
   protected data: Map<string, any>;
   protected rules: any;
@@ -25,7 +29,8 @@ export class Validator {
       data: {},
       rules: {},
       messages: {},
-      models: {}
+      models: {},
+      abortEarly: false
     }
     options = Object.assign({}, defaultOptions, options);
     this.data = new Map(Object.entries(options.data));
@@ -35,11 +40,12 @@ export class Validator {
       required: ':field is required.',
       min_length: ':field length need to be at least :length: character(s) long.',
       max_length: ':field length need to be at most :length: character(s) long.',
+      between_length: ':field length need to be at between :min and max characters.',
       email: ':value is not a valid email.',
       confirmed: ':field does not match confirmation field.',
-      min: ':field length must be greater than or equal :min',
-      max: ':field length must be lesser than or equal :max',
-      between: ':field length must be between :min and :max',
+      min: ':field must be greater than or equal :min',
+      max: ':field must be lesser than or equal :max',
+      between: ':field must be between :min and :max',
       unique: ':field already exists.',
       exists: 'No :model matching :key = :value',
       required_unless: ':field is required when \':otherField\' is not present',
@@ -79,7 +85,7 @@ export class Validator {
       } else {
         methods = validationRule.split('|');
       }
-      for (let m of methods) {
+      methods.map(async m => {
         let parts: string[] = m.split(':');
         let params: any = [];
         params.push(field)
@@ -92,6 +98,7 @@ export class Validator {
         // console.log('method: %s, params: %o', method, params)
         // this[method].apply(this, params)
         // only check the other rules when field is defined in data except when the rule is 'required'
+        // TODO: if (options.abortEarly) then stop on first error
         switch (method) {
           case 'required':
             this.required.apply(this, params)
@@ -101,6 +108,9 @@ export class Validator {
             break;
           case 'max_length':
             this.max_length.apply(this, params)
+            break;
+          case 'between_length':
+            this.between_length.apply(this, params)
             break;
           case 'email':
             this.email.apply(this, params)
@@ -150,7 +160,7 @@ export class Validator {
           default:
             throw new Error('Unknown validation rule: ' + method)
         }
-      }
+      })
     }
 
     for (const callback of this.afterCallbacks) {
@@ -179,11 +189,12 @@ export class Validator {
    */
   min_length (field: string, l: string): boolean {
     const length = Number(l)
-    if (this.data.has(field) && String(this.data.get(field)).length < length) {
+    const fieldLength = Buffer.byteLength(String(this.data.get(field)))
+    if (this.data.has(field) && fieldLength < length) {
       this.addError(field, this.getErrorFor('min_length', field, {length}))
-      return false
+      return true
     }
-    return true
+    return false
   }
 
   /**
@@ -193,11 +204,21 @@ export class Validator {
    */
   max_length (field: string, l: string): boolean {
     const length = Number(l)
-    if (this.data.has(field) && String(this.data.get(field)).length > length) {
+    const fieldLength = Buffer.byteLength(String(this.data.get(field)))
+    if (this.data.has(field) && fieldLength > length) {
       this.addError(field, this.getErrorFor('max_length', field, {length}))
-      return false
+      return true
     }
-    return true
+    return false
+  }
+
+  between_length (field: string, min: string, max: string): boolean {
+    const fieldLength = Buffer.byteLength(String(this.data.get(field)))
+    if (fieldLength < +min || fieldLength > +max) {
+      this.addError(field, this.getErrorFor('between_length', field, {min, max}))
+      return true
+    }
+    return false
   }
 
   /**
@@ -212,9 +233,9 @@ export class Validator {
     let emailRegex: any = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     if (!this.data.get(field).match(emailRegex)) {
       this.addError(field, this.getErrorFor('email', field))
-      return false
+      return true
     }
-    return true
+    return false
   }
 
   /**
@@ -227,9 +248,9 @@ export class Validator {
     }
     if (this.data.get(field) !== this.data.get(`${field}_confirmation`)) {
       this.addError(field, this.getErrorFor('confirmed', field))
-      return false
+      return true
     }
-    return true
+    return false
   }
 
   /**
@@ -245,7 +266,7 @@ export class Validator {
     const value = Number(this.data.get(field))
     if (value < +min) {
       this.addError(field, this.getErrorFor('min', field, {min}))
-      return false
+      return true
     }
     return false
   }
@@ -263,7 +284,7 @@ export class Validator {
     const value = Number(this.data.get(field))
     if (value > +max) {
       this.addError(field, this.getErrorFor('max', field, {max}))
-      return false
+      return true
     }
     return false
   }
@@ -282,9 +303,9 @@ export class Validator {
     const value = Number(this.data.get(field))
     if (value < +min || value > +max) {
       this.addError(field, this.getErrorFor('between', field, {min, max}))
-      return false
+      return true
     }
-    return true
+    return false
   }
 
   /**
@@ -300,7 +321,7 @@ export class Validator {
     if (exists) {
       this.addError(field, this.getErrorFor('unique', field, {model}))
     }
-    return exists
+    return !exists
   }
 
   /**
@@ -335,7 +356,7 @@ export class Validator {
       if (!exists) {
         this.addError(field, this.getErrorFor('exists', field, {key, model}))
       }
-      return exists
+      return !exists
     } catch (e) {
       const message = (e.kind === 'ObjectId' && e.name === 'CastError')
         ? this.getErrorFor('exists', field, {key, model})
@@ -355,7 +376,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('required_unless', field, {otherField}))
     }
-    return !hasError
+    return hasError
   }
 
   /**
@@ -368,7 +389,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('required_with', field, {otherField}))
     }
-    return !hasError
+    return hasError
   }
 
   /**
@@ -384,7 +405,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('greater_than', field, {otherField}))
     }
-    return !hasError
+    return hasError
   }
 
   /**
@@ -421,7 +442,7 @@ export class Validator {
       const result = this._validateDate(date)
       if (!result) {
         this.addError(field, `${date} is not a valid date in yyyy-mm-dd format`)
-        return false
+        return true
       }
       const {year, month, day} = result
       minDate = +new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
@@ -429,7 +450,7 @@ export class Validator {
     const result = this._validateDate(this.data.get(field))
     if (!result) {
       this.addError(field, `${this.data.get(field)} is not a valid date in yyyy-mm-dd format`)
-      return false
+      return true
     }
     const {year, month, day} = result
     const inputDate = +new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
@@ -437,7 +458,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('after', field, {date}))
     }
-    return !hasError
+    return hasError
   }
 
   regex (field: string, reg: string) {
@@ -450,7 +471,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('regex', field, {reg: regex}))
     }
-    return !hasError
+    return hasError
   }
 
   array (field: string, otherField: string): boolean {
@@ -471,7 +492,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('in_array', field, {values: values.join()}))
     }
-    return !hasError
+    return hasError
   }
 
   boolean (field: string): boolean {
@@ -482,7 +503,7 @@ export class Validator {
     if (hasError) {
       this.addError(field, this.getErrorFor('boolean', field))
     }
-    return !hasError
+    return hasError
   }
 
   /**

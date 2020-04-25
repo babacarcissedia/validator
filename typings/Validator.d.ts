@@ -1,5 +1,5 @@
 export interface IValidatorOptions {
-    data: Map<string, any>;
+    data: Map<string, any> | {};
     rules: any;
     messages?: any;
     models?: any;
@@ -28,9 +28,16 @@ export declare class Validator {
     required(field: string): boolean;
     /**
      * @param {string} field
+     * @param {string} l
      * @returns boolean
      */
     min_length(field: string, l: string): boolean;
+    /**
+     * @param {string} field
+     * @param {string} l
+     * @returns boolean
+     */
+    max_length(field: string, l: string): boolean;
     /**
      *
      * @param {string} field

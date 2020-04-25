@@ -84,6 +84,7 @@ var Validator = /** @class */ (function () {
         var messages = Object.assign({}, {
             required: ':field is required.',
             min_length: ':field length need to be at least :length: character(s) long.',
+            max_length: ':field length need to be at most :length: character(s) long.',
             email: ':value is not a valid email.',
             confirmed: ':field does not match confirmation field.',
             min: ':field length must be greater than or equal :min',
@@ -114,11 +115,11 @@ var Validator = /** @class */ (function () {
                         fields = Object.keys(this.rules);
                         _g.label = 1;
                     case 1:
-                        _g.trys.push([1, 36, 37, 38]);
+                        _g.trys.push([1, 37, 38, 39]);
                         fields_1 = __values(fields), fields_1_1 = fields_1.next();
                         _g.label = 2;
                     case 2:
-                        if (!!fields_1_1.done) return [3 /*break*/, 35];
+                        if (!!fields_1_1.done) return [3 /*break*/, 36];
                         field = fields_1_1.value;
                         validationRule = this.rules[field];
                         if (!(typeof validationRule === 'function')) return [3 /*break*/, 7];
@@ -137,7 +138,7 @@ var Validator = /** @class */ (function () {
                         e_1 = _g.sent();
                         this.addError(field, e_1.message.split(':value').join(fieldValue));
                         return [3 /*break*/, 6];
-                    case 6: return [3 /*break*/, 34];
+                    case 6: return [3 /*break*/, 35];
                     case 7:
                         methods = void 0;
                         if (Array.isArray(validationRule)) {
@@ -148,11 +149,11 @@ var Validator = /** @class */ (function () {
                         }
                         _g.label = 8;
                     case 8:
-                        _g.trys.push([8, 32, 33, 34]);
+                        _g.trys.push([8, 33, 34, 35]);
                         methods_1 = (e_2 = void 0, __values(methods)), methods_1_1 = methods_1.next();
                         _g.label = 9;
                     case 9:
-                        if (!!methods_1_1.done) return [3 /*break*/, 31];
+                        if (!!methods_1_1.done) return [3 /*break*/, 32];
                         m = methods_1_1.value;
                         parts = m.split(':');
                         params = [];
@@ -168,106 +169,110 @@ var Validator = /** @class */ (function () {
                         switch (_a) {
                             case 'required': return [3 /*break*/, 10];
                             case 'min_length': return [3 /*break*/, 11];
-                            case 'email': return [3 /*break*/, 12];
-                            case 'confirmed': return [3 /*break*/, 13];
-                            case 'min': return [3 /*break*/, 14];
-                            case 'max': return [3 /*break*/, 15];
-                            case 'between': return [3 /*break*/, 16];
-                            case 'unique': return [3 /*break*/, 17];
-                            case 'exists': return [3 /*break*/, 19];
-                            case 'required_unless': return [3 /*break*/, 21];
-                            case 'required_with': return [3 /*break*/, 22];
-                            case 'greater_than': return [3 /*break*/, 23];
-                            case 'after': return [3 /*break*/, 24];
-                            case 'array': return [3 /*break*/, 25];
-                            case 'regex': return [3 /*break*/, 26];
-                            case 'in_array': return [3 /*break*/, 27];
-                            case 'boolean': return [3 /*break*/, 28];
+                            case 'max_length': return [3 /*break*/, 12];
+                            case 'email': return [3 /*break*/, 13];
+                            case 'confirmed': return [3 /*break*/, 14];
+                            case 'min': return [3 /*break*/, 15];
+                            case 'max': return [3 /*break*/, 16];
+                            case 'between': return [3 /*break*/, 17];
+                            case 'unique': return [3 /*break*/, 18];
+                            case 'exists': return [3 /*break*/, 20];
+                            case 'required_unless': return [3 /*break*/, 22];
+                            case 'required_with': return [3 /*break*/, 23];
+                            case 'greater_than': return [3 /*break*/, 24];
+                            case 'after': return [3 /*break*/, 25];
+                            case 'array': return [3 /*break*/, 26];
+                            case 'regex': return [3 /*break*/, 27];
+                            case 'in_array': return [3 /*break*/, 28];
+                            case 'boolean': return [3 /*break*/, 29];
                         }
-                        return [3 /*break*/, 29];
+                        return [3 /*break*/, 30];
                     case 10:
                         this.required.apply(this, params);
-                        return [3 /*break*/, 30];
+                        return [3 /*break*/, 31];
                     case 11:
                         this.min_length.apply(this, params);
-                        return [3 /*break*/, 30];
+                        return [3 /*break*/, 31];
                     case 12:
-                        this.email.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.max_length.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 13:
-                        this.confirmed.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.email.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 14:
-                        this.min.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.confirmed.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 15:
-                        this.max.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.min.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 16:
+                        this.max.apply(this, params);
+                        return [3 /*break*/, 31];
+                    case 17:
                         this.between.apply(this, params);
-                        return [3 /*break*/, 30];
-                    case 17: return [4 /*yield*/, this.unique.apply(this, params)];
-                    case 18:
+                        return [3 /*break*/, 31];
+                    case 18: return [4 /*yield*/, this.unique.apply(this, params)];
+                    case 19:
                         _g.sent();
-                        return [3 /*break*/, 30];
-                    case 19: return [4 /*yield*/, this.exists.apply(this, params)];
-                    case 20:
-                        _g.sent();
-                        return [3 /*break*/, 30];
+                        return [3 /*break*/, 31];
+                    case 20: return [4 /*yield*/, this.exists.apply(this, params)];
                     case 21:
-                        this.required_unless.apply(this, params);
-                        return [3 /*break*/, 30];
+                        _g.sent();
+                        return [3 /*break*/, 31];
                     case 22:
-                        this.required_with.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.required_unless.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 23:
-                        this.greater_than.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.required_with.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 24:
-                        this.after.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.greater_than.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 25:
-                        this.array.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.after.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 26:
-                        this.regex.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.array.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 27:
-                        this.in_array.apply(this, params);
-                        return [3 /*break*/, 30];
+                        this.regex.apply(this, params);
+                        return [3 /*break*/, 31];
                     case 28:
+                        this.in_array.apply(this, params);
+                        return [3 /*break*/, 31];
+                    case 29:
                         this.boolean.apply(this, params);
-                        return [3 /*break*/, 30];
-                    case 29: throw new Error('Unknown validation rule: ' + method);
-                    case 30:
+                        return [3 /*break*/, 31];
+                    case 30: throw new Error('Unknown validation rule: ' + method);
+                    case 31:
                         methods_1_1 = methods_1.next();
                         return [3 /*break*/, 9];
-                    case 31: return [3 /*break*/, 34];
-                    case 32:
+                    case 32: return [3 /*break*/, 35];
+                    case 33:
                         e_2_1 = _g.sent();
                         e_2 = { error: e_2_1 };
-                        return [3 /*break*/, 34];
-                    case 33:
+                        return [3 /*break*/, 35];
+                    case 34:
                         try {
                             if (methods_1_1 && !methods_1_1.done && (_e = methods_1.return)) _e.call(methods_1);
                         }
                         finally { if (e_2) throw e_2.error; }
                         return [7 /*endfinally*/];
-                    case 34:
+                    case 35:
                         fields_1_1 = fields_1.next();
                         return [3 /*break*/, 2];
-                    case 35: return [3 /*break*/, 38];
-                    case 36:
+                    case 36: return [3 /*break*/, 39];
+                    case 37:
                         e_3_1 = _g.sent();
                         e_3 = { error: e_3_1 };
-                        return [3 /*break*/, 38];
-                    case 37:
+                        return [3 /*break*/, 39];
+                    case 38:
                         try {
                             if (fields_1_1 && !fields_1_1.done && (_d = fields_1.return)) _d.call(fields_1);
                         }
                         finally { if (e_3) throw e_3.error; }
                         return [7 /*endfinally*/];
-                    case 38:
+                    case 39:
                         try {
                             for (_b = __values(this.afterCallbacks), _c = _b.next(); !_c.done; _c = _b.next()) {
                                 callback = _c.value;
@@ -299,12 +304,26 @@ var Validator = /** @class */ (function () {
     };
     /**
      * @param {string} field
+     * @param {string} l
      * @returns boolean
      */
     Validator.prototype.min_length = function (field, l) {
         var length = Number(l);
         if (this.data.has(field) && String(this.data.get(field)).length < length) {
             this.addError(field, this.getErrorFor('min_length', field, { length: length }));
+            return false;
+        }
+        return true;
+    };
+    /**
+     * @param {string} field
+     * @param {string} l
+     * @returns boolean
+     */
+    Validator.prototype.max_length = function (field, l) {
+        var length = Number(l);
+        if (this.data.has(field) && String(this.data.get(field)).length > length) {
+            this.addError(field, this.getErrorFor('max_length', field, { length: length }));
             return false;
         }
         return true;

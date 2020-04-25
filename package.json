@@ -1,7 +1,9 @@
 {
-  "name": "buddy-validator",
-  "version": "0.4.1",
+  "name": "@buddy/form-validator",
+  "version": "0.8.0",
   "main": "index.js",
+  "module": "src/Validator.ts",
+  "sideEffects": false,
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
@@ -21,6 +23,7 @@
   "private": false,
   "devDependencies": {
     "@types/jest": "^25.2.1",
+    "@types/node": "^13.11.1",
     "jest": "^25.2.7",
     "nodemon": "^2.0.2",
     "ts-jest": "^25.3.1",
