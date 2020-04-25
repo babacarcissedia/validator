@@ -10,9 +10,9 @@ If you're building application with ExpressJs and MongoDB then this is definitel
 This is a validation tool that you can use in your every day life as 
 The following is also applicable to the whole javascript ecosystem in general
 
-[NPM](https://www.npmjs.com/package/buddy-validator)
+[NPM](https://www.npmjs.com/package/@buddy/form-validator)
 
-![npm](https://img.shields.io/npm/dm/buddy-validator)
+![npm](https://img.shields.io/npm/dm/@buddy/form-validator)
 
 ## Summary
 - Installation
@@ -28,19 +28,19 @@ The following is also applicable to the whole javascript ecosystem in general
 ## Installation
 ```bash
 // with yarn
-yarn add buddy-validator
+yarn add @buddy/form-validator
 
 // with npm
-npm install buddy-validator
+npm install @buddy/form-validator
 ```
 
 ### Add typings for typescript users
 ```bash
 // with yarn
-yarn add -D @types/buddy-validator
+yarn add -D @types/@buddy/form-validator
 
 // with npm
-npm install --save-dev @types/buddy-validator
+npm install --save-dev @types/@buddy/form-validator
 ```
 
 
@@ -65,7 +65,7 @@ npm install --save-dev @types/buddy-validator
 
 ## Usage on CommonJS
 ```js
-const Validator = require('buddy-validator')
+const Validator = require('@buddy/form-validator')
 const v = await Validator.make({
   data: {
     name: 'John Doe',
@@ -112,7 +112,7 @@ if (v.fails()) {
 
 ```js
 // component.vue => script
-import Validator from 'buddy-validator'
+import Validator from '@buddy/form-validator'
 export default {
   data () {
     return {
@@ -144,7 +144,7 @@ export default {
 
 ## Usage with express 
 ```ts
-import Validator from 'buddy-validator'
+import Validator from '@buddy/form-validator'
 
 const formData = request.body // {first_name, last_name, age}
 const v = await Validator.make({

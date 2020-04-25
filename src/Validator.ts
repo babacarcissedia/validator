@@ -3,7 +3,7 @@ export interface IValidatorOptions {
   rules: any,
   messages?: any,
   models?: any,
-  abortEarly: boolean
+  abortEarly?: boolean
 }
 
 
