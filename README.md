@@ -1,18 +1,18 @@
-# Form validator for web application or API
+# Form data validator for web application or API
 
-![.github/workflows/package.yml](https://github.com/bcdbuddy/form-validator/workflows/.github/workflows/package.yml/badge.svg)
+![.github/workflows/package.yml](https://github.com/bcdbcdbuddy/form-validator/workflows/.github/workflows/package.yml/badge.svg)
 
 Inspired from [Laravel validation](https://github.com/laravel/docs/blob/7.x/validation.md).
 
-Dependency free.
+**Dependency free.**
 
 If you're building application with ExpressJs and MongoDB then this is definitely something you need to check out.
 This is a validation tool that you can use in your every day life as 
 The following is also applicable to the whole javascript ecosystem in general
 
-[NPM](https://www.npmjs.com/package/@buddy/form-validator)
+[NPM](https://www.npmjs.com/package/@bcdbuddy/form-validator)
 
-![npm](https://img.shields.io/npm/dm/@buddy/form-validator)
+![npm](https://img.shields.io/npm/dm/@bcdbuddy/form-validator)
 
 ## Summary
 - Installation
@@ -28,19 +28,12 @@ The following is also applicable to the whole javascript ecosystem in general
 ## Installation
 ```bash
 // with yarn
-yarn add @buddy/form-validator
+yarn add @bcdbuddy/form-validator
 
 // with npm
-npm install @buddy/form-validator
-```
+npm install @bcdbuddy/form-validator
 
-### Add typings for typescript users
-```bash
-// with yarn
-yarn add -D @types/@buddy/form-validator
-
-// with npm
-npm install --save-dev @types/@buddy/form-validator
+// typings: This package comes with its own typings so you won't need to install @types/...
 ```
 
 
@@ -61,11 +54,13 @@ npm install --save-dev @types/@buddy/form-validator
 - in_array
 - boolean
 - min_length
+- max_length
+- between_length
 
 
 ## Usage on CommonJS
 ```js
-const Validator = require('@buddy/form-validator')
+const Validator = require('@bcdbuddy/form-validator')
 const v = await Validator.make({
   data: {
     name: 'John Doe',
@@ -94,13 +89,13 @@ if (v.fails()) {
   .register-page
     h1 Créer votre compte
     form.form(action="/user" method='POST' @submit.prevent="onSubmit")
-      .form-field.has-input
+      .form-field
         label(for="phone_number") Phone number 
         input(type="text" name="phone_number" id="phone_number" v-model="user.phone_number")
-      .form-field.has-input
+      .form-field
         label(for="password") Password
         input(type="password" name="password" id="password" v-model="user.password")
-      .form-field.has-input
+      .form-field
         label(for="password_confirmation") Password confirmation
         input(type="password" name="password_confirmation" id="password_confirmation" v-model="user.password_confirmation")
       .form-actions
@@ -112,7 +107,7 @@ if (v.fails()) {
 
 ```js
 // component.vue => script
-import Validator from '@buddy/form-validator'
+import Validator from '@bcdbuddy/form-validator'
 export default {
   data () {
     return {
@@ -144,7 +139,7 @@ export default {
 
 ## Usage with express 
 ```ts
-import Validator from '@buddy/form-validator'
+import Validator from '@bcdbuddy/form-validator'
 
 const formData = request.body // {first_name, last_name, age}
 const v = await Validator.make({

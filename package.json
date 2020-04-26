@@ -1,6 +1,6 @@
 {
-  "name": "@buddy/form-validator",
-  "version": "0.8.0",
+  "name": "@bcdbuddy/validator",
+  "version": "0.8.1",
   "main": "index.js",
   "module": "src/Validator.ts",
   "sideEffects": false,
