@@ -499,7 +499,7 @@ export class Validator {
     if (!this.data.has(field)) {
       return false
     }
-    const hasError: boolean = ![true, false, 1, 0, '1', '0'].includes(this.data.get(field))
+    const hasError: boolean = ![true, false, 'true', 'false', 1, 0, '1', '0'].includes(this.data.get(field))
     if (hasError) {
       this.addError(field, this.getErrorFor('boolean', field))
     }
