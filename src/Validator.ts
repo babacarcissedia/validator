@@ -22,7 +22,6 @@ export class Validator {
   protected messages: Map<string, string>;
   protected errors: Map<string, string> = new Map();
   protected models: any;
-  protected afterCallbacks: ((v: Validator) => void)[] = [];
 
   constructor (options: IValidatorOptions) {
     const defaultOptions = {
@@ -51,7 +50,9 @@ export class Validator {
       required_unless: ':field is required when \':otherField\' is not present',
       required_with: '\':field\' is required when \':otherField\' is defined.',
       greater_than: '\':field\' should be a greater than \':otherField\'.',
+      date: '\':field\' should be a valid date.',
       after: '\':field\' should be a date greater past \':date\'.',
+      before: '\':field\' should be a date before \':date\'.',
       in_array: '\':value\' is not a value from \':values\'.',
       regex: '\':field\' does not match regex \':regex\'.',
       boolean: '\':field\' should be true or false value not \':value\'.'
@@ -142,6 +143,12 @@ export class Validator {
           case 'greater_than':
             this.greater_than.apply(this, params)
             break
+          case 'date':
+            this.date.apply(this, params)
+            break
+          case 'before':
+            this.before.apply(this, params)
+            break
           case 'after':
             this.after.apply(this, params)
             break
@@ -163,9 +170,6 @@ export class Validator {
       })
     }
 
-    for (const callback of this.afterCallbacks) {
-      callback(this)
-    }
     return this
   }
 
@@ -409,21 +413,74 @@ export class Validator {
   }
 
   /**
-   * @param {string} date
-   * @returns {year: string, month: string, day: string}
+   * @param {string} dateString
+   * @returns {year: string, month: string, day: string, date: string, time: string, hour: string, minute: string, second: string}
    * @private
    */
-  _validateDate (date: string) {
-    const regex = /([0-9]{4})-([0-9]{2})-([0-9]{2})/
-    const matches = date.match(regex) || []
+  _validateDate (dateString: string) {
+    const regex = /(([0-9]{4})-([0-9]{2})-([0-9]{2}))(.(([0-9]{2}):([0-9]{2}):([0-9]{2})))?/
+    const matches = dateString.match(regex) || []
     if (matches.length <= 3) {
       return false
     }
-    const {1: year, 2: month, 3: day} = matches
-    if (parseInt(year) <= 0 || parseInt(month) <= 0 || parseInt(day) <= 0 || parseInt(month) > 12) {
+    const {1: date, 2: year, 3: month, 4: day, 5: time, 7: hour, 8: minute, 9: second} = matches
+    if (parseInt(year) < 1
+      || parseInt(month) < 1 || parseInt(month) > 12
+      || parseInt(day) < 1 || parseInt(day) > 31
+      || parseInt(hour) < 0 || parseInt(hour) > 23
+      || parseInt(minute) < 0 || parseInt(minute) > 59
+      || parseInt(second) < 0 || parseInt(second) > 59
+    ) {
       return false
     }
-    return {year, month, day}
+    return {year, month, day, hour, minute, second, date, time}
+  }
+
+  date (field: string) {
+    if (!this.data.has(field)) {
+      return false
+    }
+    const value = this.data.get(field)
+    const isInPredefinedValues = ['today', 'tomorrow', 'yesterday'] // just this for now
+      .some(predefined => predefined === value)
+    if (isInPredefinedValues) {
+      return false
+    }
+    const hasError = isNaN(+new Date(value))
+    if (hasError) {
+      this.addError(field, this.getErrorFor('date', field))
+    }
+    return hasError
+  }
+
+  before (field: string, date: string) {
+    if (!this.data.has(field)) {
+      return false
+    }
+    let minDate: number
+    if (date === 'today') {
+      minDate = +new Date()
+    } else {
+      const result = this._validateDate(date)
+      if (!result) {
+        this.addError(field, `${date} is not a valid date in yyyy-mm-dd format`)
+        return true
+      }
+      const {year, month, day} = result
+      minDate = +new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    }
+    const result = this._validateDate(this.data.get(field))
+    if (!result) {
+      this.addError(field, `${this.data.get(field)} is not a valid date in yyyy-mm-dd format`)
+      return true
+    }
+    const {year, month, day} = result
+    const inputDate = +new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+    const hasError = inputDate < minDate
+    if (hasError) {
+      this.addError(field, this.getErrorFor('after', field, {date}))
+    }
+    return hasError
   }
 
   /**
@@ -567,10 +624,6 @@ export class Validator {
   public addError (field: string, message: string): Validator {
     this.errors.set(field, message)
     return this
-  }
-
-  public afterHook (callback: (v: Validator) => void) {
-    this.afterCallbacks.push(callback)
   }
 }
 

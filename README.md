@@ -41,18 +41,26 @@ npm install @bcdbuddy/validator
 - required
 - email
 - confirmed
-- min
-- max
-- between
 - unique
 - exists
 - required_unless
 - required_with
-- greater_than
-- after
-- regex
 - in_array
 - boolean
+
+### Numeric
+- greater_than
+- lesser_than
+- min
+- max
+- between
+
+### Date
+- date
+- after
+- regex
+
+## String
 - min_length
 - max_length
 - between_length
