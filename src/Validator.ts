@@ -494,7 +494,8 @@ export class Validator {
     }
     let minDate: number
     if (date === 'today') {
-      minDate = +new Date()
+      const today = new Date()
+      minDate = +new Date(today.getUTCFullYear(), today.getMonth(), today.getDate())
     } else {
       const result = this._validateDate(date)
       if (!result) {

@@ -61,6 +61,15 @@ describe('Validator::after(field, date)', () => {
       expect(v.getErrors()).not.toHaveProperty('at')
     })
 
+    it('should succeed when date input is today', async () => {
+      const v = await Validator.make({
+        data: { at: moment().format('YYYY-MM-DD') },
+        rules: { at: 'after:today' }
+      })
+      expect(v.fails()).toBe(false)
+      expect(v.getErrors()).not.toHaveProperty('at')
+    })
+
     it('should fail when date input is after specified max date', async () => {
       const v = await Validator.make({
         data: { at: moment().add(-1, 'day').format('YYYY-MM-DD') },

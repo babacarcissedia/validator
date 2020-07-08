@@ -15,7 +15,7 @@ describe('Validator::date(field)', () => {
 
   it('should fail when date params is not valid', async () => {
     const v = await Validator.make({
-      data: { at: 'invalid date string' },
+      data: { at: 'invalid-date' },
       rules: { at: 'date' }
     })
     expect(v.fails()).toBe(true)
